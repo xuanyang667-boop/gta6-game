@@ -51,6 +51,15 @@ export class PlayScene extends Phaser.Scene {
     this.setupCamera();
     this.setupMarkers();
     this.hud.show();
+    // Clicking the dialogue box advances it (the hint says so). Wired once
+    // via window.__game so it survives scene restarts.
+    if (!this.hud.el.dialog.dataset.wired) {
+      this.hud.el.dialog.dataset.wired = '1';
+      this.hud.el.dialog.addEventListener('click', () => {
+        const g = window.__game;
+        if (g?.missions?.inDialogue) { g.audio.click(); g.missions.advanceDialogue(); }
+      });
+    }
     this.hud.update(this.game, this.playerView(), this.missions, 0);
     // Start the first mission only after markers exist (setupMissionStep
     // positions them).
@@ -358,9 +367,10 @@ export class PlayScene extends Phaser.Scene {
     if (now - (this.lastPauseT ?? 0) > 300 && this.input2.justPressed('pause')) {
       this.lastPauseT = now;
       this.togglePause();
+      this.input2.endFrame();
       return;
     }
-    if (this.paused) return;
+    if (this.paused) { this.input2.endFrame(); return; }
 
     if (this.input2.justPressed('mute')) {
       this.audio.setMuted(!this.audio.muted);
@@ -373,6 +383,7 @@ export class PlayScene extends Phaser.Scene {
         this.audio.click();
         this.missions.advanceDialogue();
       }
+      this.input2.endFrame();
       return;
     }
 

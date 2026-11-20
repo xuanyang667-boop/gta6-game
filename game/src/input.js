@@ -23,6 +23,13 @@ export class Input {
     };
     this.pointer = scene.input.activePointer;
     this._shootEdge = false;
+    this._edges = new Set();
+    // Edge detection via key events: Phaser's JustDown only sees a press if
+    // the key is still down when the frame runs, so quick taps get lost.
+    // A 'down' event per key records the action; justPressed() consumes it.
+    for (const [action, keys] of Object.entries(this.map)) {
+      for (const k of keys) k.on('down', () => this._edges.add(action));
+    }
     scene.input.on('pointerdown', p => { if (p.leftButtonDown()) this._shootEdge = true; });
   }
 
@@ -37,7 +44,8 @@ export class Input {
     return (this.map[action] ?? []).some(k => k.isDown);
   }
   justPressed(action) {
-    return (this.map[action] ?? []).some(k => Phaser.Input.Keyboard.JustDown(k));
+    if (this._edges.has(action)) { this._edges.delete(action); return true; }
+    return false;
   }
   // Mouse aim in world coordinates.
   aimWorld(camera) {
@@ -53,6 +61,7 @@ export class Input {
   }
   // Call once per frame after the scene read the edge flags.
   endFrame() {
+    this._edges.clear();
     this._shootEdge = false;
   }
 }
