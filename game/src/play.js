@@ -187,7 +187,7 @@ export class PlayScene extends Phaser.Scene {
     }
     // Mission-specific staging.
     if (mission.id === 'first-wheels' && step.type === 'goto') {
-      const plaza = this.city.landmarks.diner;
+      const plaza = this.city.landmarks.plaza;
       this.parkedCar = this.traffic.spawnParked(plaza.x + 40, plaza.y + 40, 'car-blue');
       this.game.missionTarget = { x: plaza.x + 40, y: plaza.y + 40 };
       this.marker.setPosition(plaza.x + 40, plaza.y + 10).setVisible(true);
@@ -512,9 +512,11 @@ export class PlayScene extends Phaser.Scene {
     const step = this.missions.step;
     if (step?.at) {
       const lm = this.city.landmarks[step.at];
-      this.game.missionTarget = { x: lm.x, y: lm.y };
-      this.marker.setPosition(lm.x, lm.y - 30).setVisible(true);
-      this.ring.setPosition(lm.x, lm.y).setVisible(true);
+      if (lm) {
+        this.game.missionTarget = { x: lm.x, y: lm.y };
+        this.marker.setPosition(lm.x, lm.y - 30).setVisible(true);
+        this.ring.setPosition(lm.x, lm.y).setVisible(true);
+      }
     } else if (step?.type === 'tail' && this.tailCar) {
       this.game.missionTarget = { x: this.tailCar.sprite.x, y: this.tailCar.sprite.y };
       this.marker.setPosition(this.tailCar.sprite.x, this.tailCar.sprite.y - 30).setVisible(true);

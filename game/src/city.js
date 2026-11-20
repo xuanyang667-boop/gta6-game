@@ -146,6 +146,7 @@ export function generateCity(seed) {
     policeHQ: { x: 5 * BLOCK * TILE + 96, y: 5 * BLOCK * TILE + 96, label: 'SBPD HQ' },
     bank: { x: 6 * BLOCK * TILE + 96, y: 6 * BLOCK * TILE + 96, label: 'Bay National Bank' },
     diner: { x: 3 * BLOCK * TILE + 96, y: 4 * BLOCK * TILE + 96, label: "Mama Rosa's Diner" },
+    plaza: { x: 47.5 * TILE, y: 47.5 * TILE, label: 'Solmar Plaza' },
     marina: { x: 87 * TILE, y: 48 * TILE, label: 'Solmar Marina' },
     airport: { x: 10 * BLOCK * TILE + 96, y: 10 * BLOCK * TILE + 96, label: 'Solmar Airfield' },
   };
