@@ -32,10 +32,10 @@ export class PlayScene extends Phaser.Scene {
     if (!this.startData.fresh) this.loadGame();
 
     this.buildWorld();
-    this.buildPlayer();
     this.traffic = new Traffic(this, this.city, this.rng);
     this.trafficGroup = this.traffic.group;
     this.peds = new Peds(this, this.city, this.rng);
+    this.buildPlayer();
     Police.Car = Car;
     this.police = new Police(this, this.city, this.rng);
     this.combat = new Combat(this, this.city);
