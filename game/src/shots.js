@@ -21,7 +21,9 @@ function putPlayerInCar(scene, x, y, key, angle = 0) {
 export function applyShot(scene, mode) {
   const city = scene.city;
   const g = city.landmarks;
-  const downtown = { x: 48 * TILE, y: 48 * TILE };
+  // Downtown avenue centerline: tile row 48 is a road (2 tiles wide), so its
+  // center is 32px below the tile edge.
+  const downtown = { x: 48 * TILE, y: 48 * TILE + 32 };
   skipDialogue(scene);
 
   if (mode === 'cover') {
@@ -29,9 +31,9 @@ export function applyShot(scene, mode) {
     const car = putPlayerInCar(scene, downtown.x, downtown.y, 'car-blue', 0);
     car.speed = 240;
     car.sprite.body.setVelocity(240, 0);
-    const t1 = scene.traffic.spawnParked(downtown.x + 320, downtown.y - 40, 'car-red');
-    const t2 = scene.traffic.spawnParked(downtown.x + 520, downtown.y + 40, 'car-orange');
-    const t3 = scene.traffic.spawnParked(downtown.x - 260, downtown.y + 40, 'car-green');
+    const t1 = scene.traffic.spawnParked(downtown.x + 320, downtown.y - 20, 'car-red');
+    const t2 = scene.traffic.spawnParked(downtown.x + 520, downtown.y + 20, 'car-orange');
+    const t3 = scene.traffic.spawnParked(downtown.x - 260, downtown.y + 20, 'car-green');
     for (const t of [t1, t2, t3]) { t.parked = false; t.setPath([{ x: downtown.x + 900, y: t.sprite.y }]); }
     scene.shotZoom = 1.2;
     scene.cameras.main.setZoom(1.2);
@@ -43,7 +45,7 @@ export function applyShot(scene, mode) {
     for (let i = 0; i < 3; i++) {
       const u = scene.police.spawnUnit(scene.player.x, scene.player.y, 'car');
       u.state = 'chase';
-      u.car.sprite.setPosition(downtown.x - 260 - i * 90, downtown.y + (i - 1) * 70);
+      u.car.sprite.setPosition(downtown.x - 260 - i * 90, downtown.y + (i - 1) * 20);
       u.car.sprite.setRotation(0);
       u.car.speed = 300;
     }
