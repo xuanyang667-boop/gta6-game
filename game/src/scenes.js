@@ -39,6 +39,9 @@ export class MenuScene extends Phaser.Scene {
     // so screenshot tooling can stage a scene without a click.
     const params = new URLSearchParams(window.location.search);
     if (params.get('shot')) {
+      // Hide the menu overlay first: its gradient background would darken
+      // the game world in the shot.
+      this.hud.hideMenu();
       this.scene.start('play', { fresh: true });
       return;
     }

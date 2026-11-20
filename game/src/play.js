@@ -392,8 +392,10 @@ export class PlayScene extends Phaser.Scene {
     const aim = this.input2.aimWorld(this.cameras.main);
     if (this.player.inCar) {
       const car = this.player.car;
-      const throttle = mv.y < 0 ? 1 : mv.y > 0 ? -0.7 : 0;
-      const steer = mv.x;
+      let throttle = mv.y < 0 ? 1 : mv.y > 0 ? -0.7 : 0;
+      let steer = mv.x;
+      // In shot mode the car drives itself so staged shots show motion.
+      if (this.shotMode) { throttle = 1; steer = 0; }
       car.drive(throttle, steer, dt);
       this.player.x = car.sprite.x; this.player.y = car.sprite.y;
       this.player.angle = car.sprite.rotation;
@@ -549,7 +551,9 @@ export class PlayScene extends Phaser.Scene {
     const t = 1 - Math.exp(-6 * dt);
     this.focus.x += (tx - this.focus.x) * t;
     this.focus.y += (ty - this.focus.y) * t;
-    const targetZoom = this.player.inCar ? 0.85 : 1;
+    let targetZoom = this.player.inCar ? 0.85 : 1;
+    // Shot mode overrides the zoom for a tighter frame on the action.
+    if (this.shotMode && this.shotZoom) targetZoom = this.shotZoom;
     const zoom = this.cameras.main.zoom + (targetZoom - this.cameras.main.zoom) * t;
     this.cameras.main.setZoom(zoom);
   }

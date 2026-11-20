@@ -33,7 +33,8 @@ export function applyShot(scene, mode) {
     const t2 = scene.traffic.spawnParked(downtown.x + 520, downtown.y + 40, 'car-orange');
     const t3 = scene.traffic.spawnParked(downtown.x - 260, downtown.y + 40, 'car-green');
     for (const t of [t1, t2, t3]) { t.parked = false; t.setPath([{ x: downtown.x + 900, y: t.sprite.y }]); }
-    scene.cameras.main.setZoom(0.9);
+    scene.shotZoom = 1.2;
+    scene.cameras.main.setZoom(1.2);
   } else if (mode === 'chase') {
     // Three stars: SBPD cars closing in behind Leo on the avenue.
     const car = putPlayerInCar(scene, downtown.x, downtown.y, 'car-sport', 0);
@@ -46,7 +47,8 @@ export function applyShot(scene, mode) {
       u.car.sprite.setRotation(0);
       u.car.speed = 300;
     }
-    scene.cameras.main.setZoom(0.9);
+    scene.shotZoom = 1.25;
+    scene.cameras.main.setZoom(1.25);
   } else if (mode === 'mission') {
     // The Big Score: Leo on foot at Bay National Bank, rivals closing in.
     scene.missions.start(4);
@@ -58,7 +60,8 @@ export function applyShot(scene, mode) {
       const e = scene.combat.spawnEnemy(g.bank.x + 140 + i * 60, g.bank.y - 40 + i * 40, 'rival');
       scene.combatEnemyGroup().add(e.sprite);
     }
-    scene.cameras.main.setZoom(1);
+    scene.shotZoom = 1.15;
+    scene.cameras.main.setZoom(1.15);
   } else if (mode === 'street') {
     // On foot downtown: peds, traffic, the city at golden hour.
     scene.missions.start(1);
@@ -67,6 +70,7 @@ export function applyShot(scene, mode) {
     scene.playerSprite.setPosition(plaza.x, plaza.y);
     scene.player.x = plaza.x; scene.player.y = plaza.y;
     scene.peds.spawn(10, plaza.x, plaza.y);
-    scene.cameras.main.setZoom(1);
+    scene.shotZoom = 1.15;
+    scene.cameras.main.setZoom(1.15);
   }
 }
