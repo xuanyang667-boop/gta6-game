@@ -36,5 +36,29 @@ One sentence: You steal cars, run jobs and outrun the police to become king of S
 - Rival gang turf wars.
 - Rebindable keys screen.
 
+## Verification (Fri 20 Nov evening, headless Chromium + Playwright, file://)
+- Core loop playtest 18/18: menu -> briefing (E/click) -> walk -> steal car -> drive
+  -> police deploy -> mission 0 completes +$150 -> save written -> exit car ->
+  mouse-aim shoot -> Esc pause/resume. Zero page errors.
+- Missions 1-5 fast-forward 20/20: pickup, getaway escape (heat decays when
+  unseen), 25s tail, bank job, finale defend (8 Vipers) + boss Dario, end screen
+  "KING OF SOLMAR BAY". Money exact: $350 -> $650 -> $1,050 -> $1,550 -> $2,750
+  -> $5,225 (19 kills x $25 + $2,000 finale). Zero page errors.
+- Save/continue 8/8: save round-trips, title offers Continue, 30s live soak at
+  60 FPS (14 traffic, 22 peds), zero network requests (36 requests, all file://).
+- main.ts: two runs byte-identical dossier (18 game files). Kit `check`: 4 passed,
+  0 failed (competition_open, snapshot, license_osi, entrypoint); transcript rows
+  are the site's at submission (parent seals recording 01a1f8e4 on Tue).
+- Bugs found by playtesting and fixed: Traffic/Peds created after first spawn
+  (crash); mission started before markers existed (crash); missing plaza landmark
+  (crash); menu gradient darkening shot mode; quick key taps lost by Phaser
+  JustDown (now event-driven edges); dialogue box click did nothing; Esc could
+  not resume from pause; police saw through buildings (now line-of-sight, so
+  turning a corner breaks a chase); E at a pickup point re-entered your car
+  (pickup now wins); corpse kills paid $25 twice (now guarded); story end
+  crashed (mission engine never advanced past the last mission).
+
 ## Cut log
-- (none yet)
+- Stretch list (car damage/repair, side activities, day/night + weather, extra
+  missions, turf wars, rebindable keys) — cut for scope; the MVP is complete
+  and verified. Nothing from the MVP was cut.
