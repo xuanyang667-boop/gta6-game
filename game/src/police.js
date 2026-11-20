@@ -2,7 +2,7 @@
 // and search (game-ai FSM: perceive -> decide -> path -> steer), plus the heat
 // model that turns crimes into stars and stars into response.
 // Stars: 1 at heat 10, 2 at 30, 3 at 50, 4 at 70, 5 at 90.
-import { findPath, randomRoadPoint, TILE } from './city.js';
+import { findPath, randomRoadPoint, TILE, isWalkable } from './city.js';
 
 export const STAR_HEAT = [0, 10, 30, 50, 70, 90];
 
@@ -39,7 +39,7 @@ export class Police {
     const a = this.rng.next() * Math.PI * 2;
     const x = playerX + Math.cos(a) * 700, y = playerY + Math.sin(a) * 700;
     if (kind === 'car') {
-      const car = new Police.Car(this.scene, x, y, 'car-police', { maxSpeed: 460, accel: 320, kind: 'police' });
+      const car = new Police.Car(this.scene, x, y, 'car-police', { maxSpeed: 420, accel: 320, kind: 'police' });
       this.scene.trafficGroup.add(car.sprite);
       const u = { kind: 'car', car, state: 'patrol', lastKnown: { x: playerX, y: playerY }, loseT: 0, repathT: 0, path: null, pathI: 0 };
       this.units.push(u);
@@ -66,11 +66,22 @@ export class Police {
     }
   }
 
-  // Perception: a unit sees the player within 520px (cops) / 640px (cars).
+  // Perception: a unit sees the player within 520px (cops) / 640px (cars)
+  // with a clear line of sight — buildings block vision, so turning a corner
+  // is how the player breaks a chase.
   canSee(u, px, py) {
     const p = u.kind === 'car' ? u.car.sprite : u.sprite;
     const range = u.kind === 'car' ? 640 : 520;
-    return Math.hypot(p.x - px, p.y - py) < range;
+    const d = Math.hypot(p.x - px, p.y - py);
+    if (d >= range) return false;
+    // Raycast in ~24px steps; a building tile (or water) blocks sight.
+    const steps = Math.max(1, Math.ceil(d / 24));
+    for (let i = 1; i < steps; i++) {
+      const x = p.x + ((px - p.x) * i) / steps;
+      const y = p.y + ((py - p.y) * i) / steps;
+      if (!isWalkable(this.city, x, y)) return false;
+    }
+    return true;
   }
 
   update(dt, now, px, py, playerSpeed, playerInCar) {

@@ -461,6 +461,16 @@ export class PlayScene extends Phaser.Scene {
   }
 
   tryInteract(now) {
+    // A mission pickup takes priority over entering a car when the player is
+    // standing at the pickup point (otherwise E by your own car re-enters it).
+    const step = this.missions.step;
+    if (step?.type === 'pickup' && step.at) {
+      const lm = this.city.landmarks[step.at];
+      if (lm && Math.hypot(this.player.x - lm.x, this.player.y - lm.y) < step.r) {
+        this.interactPressed = true;
+        return;
+      }
+    }
     // Steal the nearest car.
     const car = this.traffic.nearestCar(this.player.x, this.player.y, 64);
     if (car && !car.isPlayer) {
