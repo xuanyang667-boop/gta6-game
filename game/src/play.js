@@ -47,13 +47,14 @@ export class PlayScene extends Phaser.Scene {
       onMissionFailed: (m, reason) => { this.hud.toast(reason); this.audio.busted(); },
       onTailProgress: () => {},
     });
-    this.missions.start(this.game.missionIndex);
-
     this.setupColliders();
     this.setupCamera();
     this.setupMarkers();
     this.hud.show();
     this.hud.update(this.game, this.playerView(), this.missions, 0);
+    // Start the first mission only after markers exist (setupMissionStep
+    // positions them).
+    this.missions.start(this.game.missionIndex);
 
     // Shot mode (for the entry screenshots): stage a scene, then signal ready.
     const params = new URLSearchParams(window.location.search);
