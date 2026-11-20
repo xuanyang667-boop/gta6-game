@@ -101,6 +101,18 @@ export class MissionEngine {
   get done() { return this.index >= MISSIONS.length; }
 
   start(index) {
+    // Out of range (e.g. free roam after the last mission): no mission, the
+    // engine just stays inactive instead of crashing on an undefined mission.
+    if (!MISSIONS[index]) {
+      this.index = index;
+      this.stepI = 0;
+      this.stepState = {};
+      this.kills = 0;
+      this.active = false;
+      this.dialogue = [];
+      this.dialogueI = 0;
+      return;
+    }
     this.index = index;
     this.stepI = 0;
     this.stepState = {};
@@ -132,6 +144,9 @@ export class MissionEngine {
     if (this.stepI >= this.mission.steps.length) {
       const m = this.mission;
       this.active = false;
+      // Advance past the finished mission so `done` is true after the last
+      // one (otherwise the scene would try to start a mission that isn't there).
+      this.index++;
       this.events.onMissionComplete(m);
       return;
     }

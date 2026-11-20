@@ -64,6 +64,7 @@ export class Combat {
   }
 
   damageEnemy(e, dmg, fromX, fromY) {
+    if (e.hp <= 0) return; // already dead — corpses don't pay twice
     e.hp -= dmg;
     const dx = e.sprite.x - fromX, dy = e.sprite.y - fromY;
     const d = Math.hypot(dx, dy) || 1;
