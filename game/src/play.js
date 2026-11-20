@@ -352,10 +352,16 @@ export class PlayScene extends Phaser.Scene {
   update(time, delta) {
     const dt = Math.min(delta / 1000, 0.05);
     const now = time;
+    // Pause toggle — checked before the paused early-return so Esc/P also
+    // resumes, with a 300 ms guard so one press can't toggle twice (Phaser's
+    // JustDown stays true for 250 ms).
+    if (now - (this.lastPauseT ?? 0) > 300 && this.input2.justPressed('pause')) {
+      this.lastPauseT = now;
+      this.togglePause();
+      return;
+    }
     if (this.paused) return;
 
-    // Pause toggle.
-    if (this.input2.justPressed('pause')) { this.togglePause(); return; }
     if (this.input2.justPressed('mute')) {
       this.audio.setMuted(!this.audio.muted);
       this.hud.toast(this.audio.muted ? 'Sound muted' : 'Sound on');
